@@ -1,8 +1,15 @@
 # Sustainable Lifestyle Calculator
-# Version 1 - CLI App
+
+# Check if matplotlib is installed
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    print("Matplotlib is not installed.")
+    print("Please run: pip install matplotlib")
+    exit()
 
 
-# This function collects all user input
+# Collect user input
 def get_user_data():
     print("Welcome to Sustainable Lifestyle Calculator")
     print("------------------------------------------")
@@ -21,7 +28,6 @@ def get_user_data():
 
     plastic = int(input("Number of single-use plastic items used: "))
 
-    # Return everything in dictionary for easier access
     return {
         "car": car_km,
         "bike": bike_km,
@@ -35,10 +41,8 @@ def get_user_data():
     }
 
 
-# Calculates score for each category
+# Calculate category scores
 def calculate_scores(data):
-
-    # Transportation score based on impact values
     transport_score = (
         (data["car"] * -3) +
         (data["bike"] * -2) +
@@ -47,10 +51,9 @@ def calculate_scores(data):
         (data["walk"] * 1.5)
     )
 
-    # Limit transport score between 0 and 100
     transport_score = max(0, min(100, transport_score + 50))
 
-    # Electricity scoring
+    # Electricity score
     if data["electricity"] <= 100:
         electricity_score = 100
     elif data["electricity"] <= 300:
@@ -58,7 +61,7 @@ def calculate_scores(data):
     else:
         electricity_score = 40
 
-    # Water scoring
+    # Water score
     if data["water"] <= 100:
         water_score = 100
     elif data["water"] <= 300:
@@ -66,7 +69,7 @@ def calculate_scores(data):
     else:
         water_score = 40
 
-    # Recycling scoring
+    # Recycling score
     recycling_scores = {
         "never": 20,
         "sometimes": 50,
@@ -76,7 +79,7 @@ def calculate_scores(data):
 
     recycling_score = recycling_scores.get(data["recycling"], 20)
 
-    # Plastic scoring
+    # Plastic score
     if data["plastic"] <= 2:
         plastic_score = 100
     elif data["plastic"] <= 5:
@@ -84,10 +87,16 @@ def calculate_scores(data):
     else:
         plastic_score = 30
 
-    return transport_score, electricity_score, water_score, recycling_score, plastic_score
+    return (
+        transport_score,
+        electricity_score,
+        water_score,
+        recycling_score,
+        plastic_score
+    )
 
 
-# Combines category scores into final eco score
+# Calculate final eco score
 def calculate_eco_score(scores):
     transport, electricity, water, recycling, plastic = scores
 
@@ -102,7 +111,7 @@ def calculate_eco_score(scores):
     return round(eco_score, 2)
 
 
-# Determines achievement level
+# Determine sustainability level
 def get_level(score):
     if score <= 20:
         return "Unsustainable"
@@ -116,44 +125,83 @@ def get_level(score):
         return "Sustainability Champion"
 
 
-# Generates recommendation text
-def generate_feedback(score, plastic, recycling):
+# Generate category-wise feedback
+def generate_feedback(scores):
     feedback = []
 
-    if plastic > 5:
-        feedback.append("Try reducing single-use plastic usage.")
+    transport, electricity, water, recycling, plastic = scores
 
-    if recycling in ["never", "sometimes"]:
-        feedback.append("Improving recycling habits can boost your score.")
+    # Transportation feedback
+    if transport >= 80:
+        feedback.append("Transportation: Excellent use of sustainable transport.")
+    elif transport >= 50:
+        feedback.append("Transportation: Moderate. Consider walking or cycling more.")
+    else:
+        feedback.append("Transportation: High carbon footprint. Reduce car usage.")
 
-    if score > 80:
-        feedback.append("Excellent work! Keep maintaining these habits.")
+    # Electricity feedback
+    if electricity >= 80:
+        feedback.append("Electricity: Great energy efficiency.")
+    elif electricity >= 50:
+        feedback.append("Electricity: Moderate consumption.")
+    else:
+        feedback.append("Electricity: High energy usage. Save electricity where possible.")
 
-    if len(feedback) == 0:
-        feedback.append("Good progress. Small improvements can help further.")
+    # Water feedback
+    if water >= 80:
+        feedback.append("Water: Excellent conservation habits.")
+    elif water >= 50:
+        feedback.append("Water: Moderate water consumption.")
+    else:
+        feedback.append("Water: High usage. Try conserving water.")
 
-    return " ".join(feedback)
+    # Recycling feedback
+    if recycling >= 80:
+        feedback.append("Recycling: Excellent recycling habits.")
+    elif recycling >= 50:
+        feedback.append("Recycling: Good, but there is room for improvement.")
+    else:
+        feedback.append("Recycling: Needs improvement.")
+
+    # Plastic feedback
+    if plastic >= 80:
+        feedback.append("Plastic: Excellent reduction in plastic usage.")
+    elif plastic >= 50:
+        feedback.append("Plastic: Moderate usage.")
+    else:
+        feedback.append("Plastic: Reduce single-use plastics.")
+
+    return feedback
+
+
+# Plot weekly sustainability progress
+def plot_progress(current_score):
+    # Sample historical data (simulated weekly scores)
+    weekly_scores = [42, 48, 53, 57, 60, 64, 68, 72, 75, current_score]
+    weeks = list(range(1, 11))
+
+    plt.plot(weeks, weekly_scores, marker='o')
+    plt.xlabel("Week")
+    plt.ylabel("Eco Score")
+    plt.title("Weekly Sustainability Progress")
+    plt.grid(True)
+    plt.show()
 
 
 def main():
     user_data = get_user_data()
-
     scores = calculate_scores(user_data)
-
     eco_score = calculate_eco_score(scores)
-
     level = get_level(eco_score)
-
-    feedback = generate_feedback(
-        eco_score,
-        user_data["plastic"],
-        user_data["recycling"]
-    )
+    feedback = generate_feedback(scores)
 
     print("\n----- RESULTS -----")
     print("Eco Score:", eco_score)
     print("Achievement Level:", level)
-    print("Feedback:", feedback)
 
+    print("\nDetailed Feedback:")
+    for item in feedback:
+        print("-", item)
 
+    plot_progress(eco_score)
 main()
