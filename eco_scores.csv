@@ -1,3 +1,18 @@
-Date,Car,Bike,Bus,Cycle,Walk,Electricity,Water,Recycling,Plastic,Transport Score,Electricity Score,Water Score,Recycling Score,Plastic Score,Eco Score,Achievement Level,Recommendation
-2026-07-11,4353.0,576.0,889.0,9876.0,87675.0,76566.0,766.0,sometimes,68,100,40,40,50,30,58.5,Improving,Excellent use of sustainable transport. | Electricity usage is high. | Water consumption is high. | Recycle more frequently. | Avoid single-use plastics.
-2026-07-11,276326326.0,3257356.0,26353.0,323.0,23432.0,32768328.0,3635.0,always,23,0,40,40,100,30,38.5,Beginner,Reduce private vehicle usage. | Electricity usage is high. | Water consumption is high. | Excellent recycling habits. | Avoid single-use plastics.
+eco_score,transport_score,electricity_score,water_score,recycling_score,plastic_score,car,bike,bus,cycle,walk,electricity,water,recycling,plastic
+46.59,44.41,80.4,67.89,0,46.67,27.11,35.71,47.03,21.0,3.6,3.96,201.28,never,8
+51.85,34.74,27.5,50.6,66.67,100,21.19,43.15,58.31,15.77,3.01,9.25,277.34,often,0
+53.91,36.03,36.1,59.2,100,46.67,25.86,40.05,54.93,18.54,5.41,8.39,239.54,always,8
+60.37,75.69,41.5,71.3,33.33,80.0,23.57,32.38,23.69,21.88,7.21,7.85,186.26,sometimes,3
+49.78,47.89,69.4,83.53,0,60.0,34.61,27.87,44.34,25.9,6.56,5.06,132.47,never,6
+50.81,37.77,96.8,67.47,0,66.67,33.2,36.56,49.43,28.6,6.8,2.32,203.12,never,5
+55.58,66.39,82.5,27.77,0,100,24.11,31.09,41.84,28.48,4.97,3.75,377.82,never,0
+46.25,60.47,24.3,37.2,33.33,73.33,28.08,39.46,31.15,34.24,7.18,9.57,336.31,sometimes,4
+74.0,57.03,97.8,15.52,100,100,34.43,27.31,26.88,19.26,7.38,2.22,431.73,always,0
+44.56,36.39,50.2,52.94,33.33,60.0,29.38,35.21,57.76,22.74,5.44,6.98,267.06,sometimes,6
+47.0,37.63,47.4,63.78,33.33,66.67,36.26,29.06,49.47,24.27,5.7,7.26,219.39,sometimes,5
+58.08,38.02,53.4,71.05,66.67,80.0,29.23,42.62,35.81,17.36,5.61,6.66,187.39,often,3
+46.33,36.95,41.3,68.77,33.33,66.67,35.57,38.76,43.18,29.91,8.62,7.87,197.43,sometimes,5
+49.48,59.35,94.0,32.5,0,53.33,28.4,32.03,48.42,36.13,7.05,2.6,357.0,never,7
+55.05,57.37,69.5,21.8,33.33,93.33,27.94,39.93,23.74,27.42,4.04,5.05,404.07,sometimes,1
+56.17,42.0,70.6,14.12,66.67,93.33,30.33,36.98,40.68,16.51,8.08,4.94,437.86,often,1
+59.02,41.32,24.1,89.8,66.67,100,34.33,34.19,36.08,23.64,3.86,9.59,104.87,often,0

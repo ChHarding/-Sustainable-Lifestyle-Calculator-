@@ -1,0 +1,12 @@
+I generally would explore how this dataset can be visualized and maybe used to set goals and analyze trends.
+
+I recommend streamlit
+
+Graph(s): make each column/line toggle-able 
+
+As each row is a day you could have graphs with weekly or monthly moving averages, which will smooth out the graphs
+in your daily graph, reduce noise and possible show trends
+
+Add a movable goal line for a value that you want to reach and print out how many values where above and below it per week. This could show you a week to week trend
+
+Have a table with the scores and there recommendation for each day
