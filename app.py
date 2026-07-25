@@ -31,7 +31,9 @@ from visualization import (
 )
 
 
-# Streamlit Page Configuration
+# -------------------------------------------------------
+# Streamlit Configuration
+# -------------------------------------------------------
 
 st.set_page_config(
     page_title="Sustainable Lifestyle Calculator",
@@ -40,22 +42,27 @@ st.set_page_config(
 )
 
 
+# -------------------------------------------------------
 # Title
+# -------------------------------------------------------
 
 st.title("🌱 Sustainable Lifestyle Calculator")
 
 st.write(
     """
 Track your daily sustainability habits,
-calculate your Eco Score,
-and monitor your progress over time.
+receive personalised recommendations,
+monitor your Eco Score,
+and visualise your progress over time.
 """
 )
 
 st.divider()
 
 
+# -------------------------------------------------------
 # Sidebar
+# -------------------------------------------------------
 
 st.sidebar.header("About")
 
@@ -80,16 +87,16 @@ st.sidebar.metric(
 )
 
 
-
+# -------------------------------------------------------
 # User Inputs
-
+# -------------------------------------------------------
 
 st.header("Daily Lifestyle Inputs")
 
 col1, col2 = st.columns(2)
 
 
-# Left Column 
+# ---------------- LEFT COLUMN ----------------
 
 with col1:
 
@@ -131,17 +138,25 @@ with col1:
     )
 
 
-# Right Column 
+# ---------------- RIGHT COLUMN ----------------
 
 with col2:
 
     st.subheader("Utilities")
+
+    st.caption(
+        "💡 Enter your approximate electricity consumption for your billing period."
+    )
 
     electricity = st.number_input(
         "Electricity Usage (kWh)",
         min_value=0.0,
         value=0.0,
         step=1.0
+    )
+
+    st.caption(
+        "🚿 Enter your approximate water consumption for your billing period."
     )
 
     water = st.number_input(
@@ -153,7 +168,6 @@ with col2:
 
     recycling = st.selectbox(
         "Recycling Habit",
-
         [
             "Never",
             "Sometimes",
@@ -170,18 +184,21 @@ with col2:
     )
 
 
+# -------------------------------------------------------
 # Calculate Button
+# -------------------------------------------------------
 
 calculate_button = st.button(
     "Calculate Eco Score",
     use_container_width=True
 )
 
+
+# -------------------------------------------------------
 # Calculate Results
+# -------------------------------------------------------
 
 if calculate_button:
-
-    # Store user inputs
 
     user_data = {
 
@@ -197,8 +214,6 @@ if calculate_button:
 
     }
 
-    # Calculate scores
-
     category_scores = calculate_scores(user_data)
 
     eco_score = calculate_eco_score(category_scores)
@@ -207,62 +222,29 @@ if calculate_button:
 
     feedback = generate_feedback(category_scores)
 
-    # Save record
-
     save_record(
-
         user_data,
-
         category_scores,
-
         eco_score,
-
         achievement_level,
-
         feedback
-
     )
 
     st.success("Eco Score calculated and saved successfully!")
 
     st.divider()
 
-
-    # Results
-
     st.header("Results")
 
     metric1, metric2, metric3 = st.columns(3)
 
-    metric1.metric(
+    metric1.metric("Eco Score", eco_score)
 
-        "Eco Score",
+    metric2.metric("Achievement Level", achievement_level)
 
-        eco_score
-
-    )
-
-    metric2.metric(
-
-        "Achievement Level",
-
-        achievement_level
-
-    )
-
-    metric3.metric(
-
-        "Records Saved",
-
-        record_count()
-
-    )
+    metric3.metric("Records Saved", record_count())
 
     st.divider()
-
-   
-    # Category Scores
-
 
     st.subheader("Category Scores")
 
@@ -270,64 +252,32 @@ if calculate_button:
 
     with score_col1:
 
-        st.metric(
-
-            "Transport",
-
-            round(category_scores[0], 2)
-
-        )
-
-        st.metric(
-
-            "Electricity",
-
-            category_scores[1]
-
-        )
-
-        st.metric(
-
-            "Water",
-
-            category_scores[2]
-
-        )
+        st.metric("Transport", round(category_scores[0], 2))
+        st.metric("Electricity", category_scores[1])
+        st.metric("Water", category_scores[2])
 
     with score_col2:
 
-        st.metric(
-
-            "Recycling",
-
-            category_scores[3]
-
-        )
-
-        st.metric(
-
-            "Plastic",
-
-            category_scores[4]
-
-        )
+        st.metric("Recycling", category_scores[3])
+        st.metric("Plastic", category_scores[4])
 
     st.divider()
 
-   
-    # Recommendations
+    # ---------------- Recommendations ----------------
 
     st.subheader("Recommendations")
 
-    for recommendation in feedback:
+    st.write(
+        "Based on today's inputs, here are some suggestions to improve your sustainability:"
+    )
 
-        st.success(recommendation)
+    for recommendation in feedback:
+        st.markdown(f"• {recommendation}")
 
     st.divider()
 
+    # ---------------- Input Summary ----------------
 
-    # User Inputs Summary
-    
     st.subheader("Today's Inputs")
 
     st.table({
@@ -335,21 +285,13 @@ if calculate_button:
         "Category": [
 
             "Car",
-
             "Motorcycle",
-
             "Bus",
-
             "Bicycle",
-
             "Walking",
-
             "Electricity",
-
             "Water",
-
             "Recycling",
-
             "Plastic"
 
         ],
@@ -357,28 +299,22 @@ if calculate_button:
         "Value": [
 
             car,
-
             bike,
-
             bus,
-
             cycle,
-
             walk,
-
             electricity,
-
             water,
-
             recycling,
-
             plastic
 
         ]
 
     })
 
+# -------------------------------------------------------
 # Dashboard
+# -------------------------------------------------------
 
 history = load_history()
 
@@ -387,11 +323,15 @@ if len(history) > 0:
     st.header("Sustainability Dashboard")
 
     df = prepare_dataframe(history)
-
-   
+    # -------------------------------------------------------
     # Historical Records
-   
+    # -------------------------------------------------------
+
     st.subheader("Historical Records")
+
+    st.caption(
+        "View all previously saved sustainability records."
+    )
 
     st.dataframe(
         df,
@@ -400,7 +340,9 @@ if len(history) > 0:
 
     st.divider()
 
-    # Graph Selection
+    # -------------------------------------------------------
+    # Progress Graph
+    # -------------------------------------------------------
 
     st.subheader("Progress Graph")
 
@@ -428,118 +370,97 @@ if len(history) > 0:
     if selected_metrics:
 
         fig = create_progress_graph(
-
             df,
-
             selected_metrics
-
         )
 
         st.plotly_chart(
-
             fig,
-
             use_container_width=True
-
         )
 
     st.divider()
 
-    
-    # Weekly Average
-    
+    # -------------------------------------------------------
+    # Weekly Moving Average
+    # -------------------------------------------------------
+
     st.subheader("Weekly Moving Average")
 
     weekly_fig = create_weekly_average_graph(df)
 
     st.plotly_chart(
-
         weekly_fig,
-
         use_container_width=True
-
     )
 
     st.divider()
 
-  
-    # Monthly Average
-    
+    # -------------------------------------------------------
+    # Monthly Moving Average
+    # -------------------------------------------------------
+
     st.subheader("Monthly Moving Average")
 
     monthly_fig = create_monthly_average_graph(df)
 
     st.plotly_chart(
-
         monthly_fig,
-
         use_container_width=True
-
     )
 
     st.divider()
 
-   
+    # -------------------------------------------------------
     # Goal Tracking
+    # -------------------------------------------------------
 
     st.subheader("Goal Tracking")
 
+    st.caption(
+        "Choose your target Eco Score to compare your progress over time."
+    )
+
     goal = st.slider(
-
         "Select your Eco Score Goal",
-
         min_value=0,
-
         max_value=100,
-
         value=75
-
     )
 
     goal_fig = create_goal_graph(
-
         df,
-
         goal
-
     )
 
     st.plotly_chart(
-
         goal_fig,
-
         use_container_width=True
-
     )
 
     st.divider()
 
-    
+    # -------------------------------------------------------
     # Weekly Goal Summary
-   
+    # -------------------------------------------------------
+
     st.subheader("Weekly Goal Summary")
 
     summary = calculate_goal_summary(
-
         df,
-
         goal
-
     )
 
     st.dataframe(
-
         summary,
-
         use_container_width=True
-
     )
 
     st.divider()
 
-    
+    # -------------------------------------------------------
     # Trend Analysis
-    
+    # -------------------------------------------------------
 
     st.subheader("Trend Analysis")
 
@@ -563,9 +484,9 @@ if len(history) > 0:
 
     st.divider()
 
-   
-    # Latest Record
-   
+    # -------------------------------------------------------
+    # Latest Entry
+    # -------------------------------------------------------
 
     st.subheader("Latest Entry")
 
@@ -576,19 +497,12 @@ if len(history) > 0:
         "Field": [
 
             "Date",
-
             "Eco Score",
-
             "Achievement Level",
-
             "Transport",
-
             "Electricity",
-
             "Water",
-
             "Recycling",
-
             "Plastic"
 
         ],
@@ -596,19 +510,12 @@ if len(history) > 0:
         "Value": [
 
             latest["Date"],
-
             latest["Eco Score"],
-
             latest["Achievement Level"],
-
             latest["Transport Score"],
-
             latest["Electricity Score"],
-
             latest["Water Score"],
-
             latest["Recycling Score"],
-
             latest["Plastic Score"]
 
         ]
@@ -619,4 +526,6 @@ if len(history) > 0:
 
 else:
 
-    st.info("No historical data available. Calculate your first Eco Score to begin.")
+    st.info(
+        "No historical data available. Calculate your first Eco Score to begin."
+    )

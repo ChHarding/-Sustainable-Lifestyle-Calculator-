@@ -44,8 +44,7 @@ def create_csv():
                 "Plastic Score",
 
                 "Eco Score",
-                "Achievement Level",
-                "Recommendation"
+                "Achievement Level"
 
             ])
 
@@ -60,11 +59,13 @@ def save_record(data, scores, eco_score, level, feedback):
         eco_score (float): Final Eco Score.
         level (str): Sustainability level.
         feedback (list): Recommendation messages.
+
+    Note:
+        Recommendations are NOT stored.
+        They are generated dynamically whenever the app loads.
     """
 
     create_csv()
-
-    recommendation = " | ".join(feedback)
 
     with open(CSV_FILE, "a", newline="") as file:
 
@@ -92,8 +93,7 @@ def save_record(data, scores, eco_score, level, feedback):
             scores[4],
 
             eco_score,
-            level,
-            recommendation
+            level
 
         ])
 

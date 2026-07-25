@@ -73,15 +73,17 @@ def create_progress_graph(df, selected_metrics):
 
     fig.update_layout(
 
-        title="Progress Over Time",
+    title="Progress Over Time",
 
-        xaxis_title="Date",
+    xaxis_title="Date",
 
-        yaxis_title="Score",
+    yaxis_title="Score",
 
-        hovermode="x unified"
+    hovermode="x unified",
 
-    )
+    template="plotly_white"
+
+)
 
     return fig
 
@@ -96,13 +98,9 @@ def create_weekly_average_graph(df):
     weekly = df.copy()
 
     weekly["Weekly Average"] = (
-
         weekly["Eco Score"]
-
-        .rolling(window=7)
-
+        .rolling(window=7, min_periods=1)
         .mean()
-
     )
 
     fig = px.line(
@@ -119,8 +117,10 @@ def create_weekly_average_graph(df):
         ],
 
         title="Weekly Moving Average"
-
     )
+    fig.update_traces(mode="lines+markers")
+
+    fig.update_layout(template="plotly_white")
 
     return fig
 
@@ -136,13 +136,13 @@ def create_monthly_average_graph(df):
 
     monthly["Monthly Average"] = (
 
-        monthly["Eco Score"]
+    monthly["Eco Score"]
 
-        .rolling(window=30)
+    .rolling(window=30, min_periods=1)
 
-        .mean()
+    .mean()
 
-    )
+)
 
     fig = px.line(
 
@@ -160,7 +160,9 @@ def create_monthly_average_graph(df):
         title="Monthly Moving Average"
 
     )
+    fig.update_traces(mode="lines+markers")
 
+    fig.update_layout(template="plotly_white")
     return fig
 
 
@@ -191,13 +193,15 @@ def create_goal_graph(df, goal):
 
     fig.add_hline(
 
-        y=goal,
+    y=goal,
 
-        line_dash="dash",
+    line_dash="dash",
 
-        annotation_text="Goal"
+    line_color="royalblue",
 
-    )
+    annotation_text="Goal"
+
+)
 
     fig.update_layout(
 
