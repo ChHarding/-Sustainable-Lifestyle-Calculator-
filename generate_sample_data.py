@@ -1,8 +1,12 @@
 """
 generate_sample_data.py
 
-Generates 60 days of realistic sample sustainability data
-for testing graphs and analytics.
+Generate sample sustainability records for testing.
+
+This utility script creates 60 days of realistic sustainability
+data and stores it in the application's CSV file. The generated
+data can be used to test dashboard visualisations, trend analysis,
+and other features without manually entering records.
 """
 
 import csv
@@ -17,7 +21,12 @@ from calculator import (
 
 CSV_FILE = "eco_scores.csv"
 
-# Delete old CSV and create a fresh one
+# ----------------------------------------------------
+# Create a Fresh CSV File
+# ----------------------------------------------------
+# Replace any existing data with a new CSV file
+# containing only the required column headings.
+
 with open(CSV_FILE, "w", newline="") as file:
 
     writer = csv.writer(file)
@@ -42,12 +51,19 @@ with open(CSV_FILE, "w", newline="") as file:
         "Achievement Level",
     ])
 
-
+# Generate sample data for the
+# previous 60 calendar days.
 start_date = datetime.now() - timedelta(days=59)
 
 for day in range(60):
 
     date = start_date + timedelta(days=day)
+
+    # ----------------------------------------------------
+    # Generate Random Sustainability Data
+    # ----------------------------------------------------
+    # Create realistic input values that closely
+    # resemble everyday lifestyle habits.
 
     data = {
 
@@ -57,7 +73,8 @@ for day in range(60):
         "cycle": random.randint(0, 4),
         "walk": random.randint(0, 8),
 
-        # Monthly-style values to match your current calculator
+        # Monthly-style values are generated to
+        # match the assumptions used by the calculator.
         "electricity": random.randint(80, 350),
 
         "water": random.randint(80, 350),
@@ -73,11 +90,17 @@ for day in range(60):
 
     }
 
+    # Calculate the sustainability scores
+    # for the generated sample data.
+
     scores = calculate_scores(data)
 
     eco_score = calculate_eco_score(scores)
 
     level = get_level(eco_score)
+
+    # Save the generated record
+    # to the CSV file.
 
     with open(CSV_FILE, "a", newline="") as file:
 

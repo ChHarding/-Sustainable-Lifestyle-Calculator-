@@ -1,3 +1,15 @@
+"""
+input_page.py
+
+Displays the Sustainability Data input page.
+
+This page collects the user's daily lifestyle habits, including
+transportation, energy usage, water consumption and waste management.
+After the user submits the form, the application calculates the
+category scores, determines the overall Eco Score, saves the result,
+and redirects the user to the Results page.
+"""
+
 import streamlit as st
 
 from calculator import (
@@ -13,7 +25,16 @@ from ui.styles import load_styles
 
 
 def show_input_page():
+    """
+    Display the Sustainability Data input form.
 
+    This function allows users to enter their daily sustainability
+    habits and calculates their Eco Score based on the submitted data.
+    The calculated results are stored in the session state so they
+    can be accessed by the Results and Dashboard pages.
+    """
+
+    # Apply the application's shared styling.
     load_styles()
 
     st.title("🌱 Enter Your Sustainability Data")
@@ -30,6 +51,8 @@ personal Sustainability Score.
     # ----------------------------------------------------
     # Transportation
     # ----------------------------------------------------
+    # Collect the user's daily travel distances
+    # across different modes of transportation.
 
     st.subheader("🚗 Transportation")
 
@@ -75,9 +98,12 @@ personal Sustainability Score.
         )
 
     st.divider()
+
     # ----------------------------------------------------
     # Energy & Resources
     # ----------------------------------------------------
+    # Collect household electricity and
+    # water consumption values.
 
     st.subheader("⚡ Energy & Resources")
 
@@ -114,6 +140,8 @@ personal Sustainability Score.
     # ----------------------------------------------------
     # Waste Management
     # ----------------------------------------------------
+    # Record recycling habits and the
+    # use of single-use plastic items.
 
     st.subheader("♻ Waste Management")
 
@@ -143,8 +171,10 @@ personal Sustainability Score.
     st.divider()
 
     # ----------------------------------------------------
-    # Navigation Buttons
+    # Navigation
     # ----------------------------------------------------
+    # Allow the user to either return to
+    # the home page or calculate their Eco Score.
 
     left, right = st.columns([1, 2])
 
@@ -164,11 +194,16 @@ personal Sustainability Score.
             "🌱 Calculate Eco Score",
             use_container_width=True
         )
+
     # ----------------------------------------------------
-    # Calculate Score
+    # Process User Input
     # ----------------------------------------------------
 
     if calculate:
+
+        # Organise all user inputs into a single
+        # dictionary before sending them to
+        # the scoring functions.
 
         user_data = {
 
@@ -186,27 +221,36 @@ personal Sustainability Score.
 
         }
 
-        # ------------------------------------------
-        # Calculate Scores
-        # ------------------------------------------
+        # Calculate the sustainability score
+        # for each individual category.
 
-        category_scores = calculate_scores(user_data)
+        category_scores = calculate_scores(
+            user_data
+        )
+
+        # Combine the category scores to
+        # calculate the final Eco Score.
 
         eco_score = calculate_eco_score(
             category_scores
         )
 
+        # Determine the user's achievement level
+        # based on the final Eco Score.
+
         achievement_level = get_level(
             eco_score
         )
+
+        # Generate personalised sustainability
+        # recommendations using the category scores.
 
         feedback = generate_feedback(
             category_scores
         )
 
-        # ------------------------------------------
-        # Save Record
-        # ------------------------------------------
+        # Save the completed calculation so it can
+        # be viewed later in the dashboard.
 
         save_record(
 
@@ -222,9 +266,9 @@ personal Sustainability Score.
 
         )
 
-        # ------------------------------------------
-        # Store Values
-        # ------------------------------------------
+        # Store the latest calculation in the
+        # session state so it can be accessed
+        # across multiple pages.
 
         st.session_state.user_data = user_data
 
@@ -236,9 +280,8 @@ personal Sustainability Score.
 
         st.session_state.feedback = feedback
 
-        # ------------------------------------------
-        # Navigate
-        # ------------------------------------------
+        # Navigate to the Results page to display
+        # the newly calculated sustainability score.
 
         st.session_state.page = "results"
 

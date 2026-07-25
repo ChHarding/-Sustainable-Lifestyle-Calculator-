@@ -1,3 +1,16 @@
+"""
+results.py
+
+Displays the Sustainability Results page.
+
+After the user completes a sustainability assessment,
+this page presents the calculated Eco Score, achievement
+level, category-wise scores, personalised recommendations,
+and a summary of the user's inputs. It also provides a
+quick overview of the user's historical progress and
+navigation to other parts of the application.
+"""
+
 import streamlit as st
 
 from data_manager import load_history
@@ -11,12 +24,26 @@ from ui.styles import load_styles
 
 
 def show_results_page():
+    """
+    Display the Sustainability Results page.
 
+    This page retrieves the latest sustainability
+    calculation stored in the session state and
+    presents it to the user. It also visualises
+    previous Eco Scores, highlights the user's
+    achievement level, provides personalised
+    recommendations, and summarises the submitted
+    sustainability data.
+    """
+
+    # Apply the application's shared styling.
     load_styles()
 
-    # -----------------------------------------
-    # Validation
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Validate Session Data
+    # --------------------------------------------------
+    # Prevent users from accessing this page
+    # before completing a sustainability assessment.
 
     if "eco_score" not in st.session_state:
 
@@ -27,7 +54,6 @@ def show_results_page():
         if st.button("← Back"):
 
             st.session_state.page = "input"
-
             st.rerun()
 
         return
@@ -44,9 +70,11 @@ and recommendations for improvement.
 
     st.divider()
 
-    # -----------------------------------------
-    # Top Section
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Results Overview
+    # --------------------------------------------------
+    # Display the user's latest Eco Score,
+    # achievement level and historical progress.
 
     left, right = st.columns([1, 1.3])
 
@@ -66,6 +94,8 @@ and recommendations for improvement.
 
         history = load_history()
 
+        # Display the progress graph only if
+        # historical records are available.
         if len(history) > 0:
 
             df = prepare_dataframe(history)
@@ -82,9 +112,12 @@ and recommendations for improvement.
 
     st.divider()
 
-    # -----------------------------------------
+    # --------------------------------------------------
     # Category Scores
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Show the individual sustainability
+    # scores that contribute to the final
+    # Eco Score.
 
     st.subheader("Category Scores")
 
@@ -130,9 +163,12 @@ and recommendations for improvement.
         )
 
     st.divider()
-    # -----------------------------------------
+
+    # --------------------------------------------------
     # Achievement Guide
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Provide a quick reference explaining
+    # what each Eco Score range represents.
 
     st.subheader("🏆 Achievement Level Guide")
 
@@ -190,9 +226,11 @@ Unsustainable
 
     st.divider()
 
-    # -----------------------------------------
-    # Recommendations
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Personalised Recommendations
+    # --------------------------------------------------
+    # Display suggestions generated from
+    # the user's category scores.
 
     st.subheader("💡 Top Recommendations")
 
@@ -211,9 +249,11 @@ here are some personalised suggestions.
 
     st.divider()
 
-    # -----------------------------------------
-    # Today's Summary
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Today's Sustainability Summary
+    # --------------------------------------------------
+    # Present the values entered by the user
+    # during the current assessment.
 
     st.subheader("📋 Today's Inputs")
 
@@ -224,21 +264,13 @@ here are some personalised suggestions.
         "Category": [
 
             "Car",
-
             "Motorcycle",
-
             "Bus",
-
             "Bicycle",
-
             "Walking",
-
             "Electricity",
-
             "Water",
-
             "Recycling",
-
             "Plastic"
 
         ],
@@ -246,21 +278,13 @@ here are some personalised suggestions.
         "Value": [
 
             f"{data['car']} km",
-
             f"{data['bike']} km",
-
             f"{data['bus']} km",
-
             f"{data['cycle']} km",
-
             f"{data['walk']} km",
-
             f"{data['electricity']} kWh",
-
             f"{data['water']} Litres",
-
             data["recycling"].title(),
-
             data["plastic"]
 
         ]
@@ -270,15 +294,14 @@ here are some personalised suggestions.
     st.table(summary)
 
     st.divider()
-    # -----------------------------------------
+
+    # --------------------------------------------------
     # Navigation
-    # -----------------------------------------
+    # --------------------------------------------------
+    # Allow the user to continue exploring
+    # the application after reviewing their results.
 
     primary, secondary, tertiary = st.columns([2, 1.2, 1.2])
-
-    # ----------------------------
-    # Primary CTA
-    # ----------------------------
 
     with primary:
 
@@ -288,12 +311,7 @@ here are some personalised suggestions.
         ):
 
             st.session_state.page = "intro"
-
             st.rerun()
-
-    # ----------------------------
-    # Secondary CTA
-    # ----------------------------
 
     with secondary:
 
@@ -303,12 +321,7 @@ here are some personalised suggestions.
         ):
 
             st.session_state.page = "dashboard"
-
             st.rerun()
-
-    # ----------------------------
-    # Tertiary CTA
-    # ----------------------------
 
     with tertiary:
 
@@ -318,7 +331,6 @@ here are some personalised suggestions.
         ):
 
             st.session_state.page = "input"
-
             st.rerun()
 
     st.markdown("<br>", unsafe_allow_html=True)

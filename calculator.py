@@ -1,23 +1,41 @@
 """
 calculator.py
 
-Contains all score calculations for the Sustainable Lifestyle Calculator.
+Contains the scoring logic for the Sustainable Lifestyle Calculator.
+
+This module converts a user's daily lifestyle habits into individual
+sustainability category scores and combines them to calculate the
+overall Eco Score. It also determines the user's achievement level
+and generates personalised recommendations based on the calculated
+results.
 """
 
 
-# Calculate category scores
-
 def calculate_scores(data):
     """
-    Calculate all sustainability category scores.
+    Calculate the sustainability score for each category.
+
+    The user's lifestyle inputs are converted into individual
+    scores for transportation, electricity usage, water
+    consumption, recycling habits and plastic usage.
 
     Args:
-        data (dict): User lifestyle inputs.
+        data (dict):
+            Dictionary containing the user's lifestyle inputs.
 
     Returns:
-        tuple: Transport, Electricity, Water,
-               Recycling and Plastic scores.
+        tuple:
+            Transport, Electricity, Water, Recycling and
+            Plastic scores, each ranging from 0 to 100.
     """
+
+    # ----------------------------------------------------
+    # Transportation Score
+    # ----------------------------------------------------
+    # Different modes of transport contribute differently
+    # to the sustainability score. Walking and cycling
+    # increase the score, while motorised transport
+    # reduces it.
 
     transport_score = (
         (data["car"] * -3)
@@ -27,9 +45,14 @@ def calculate_scores(data):
         + (data["walk"] * 1.5)
     )
 
+    # Keep the transport score within the valid range.
     transport_score = max(0, min(100, transport_score + 50))
 
+    # ----------------------------------------------------
     # Electricity Score
+    # ----------------------------------------------------
+    # Lower electricity consumption results
+    # in a higher sustainability score.
 
     if data["electricity"] <= 100:
         electricity_score = 100
@@ -40,7 +63,11 @@ def calculate_scores(data):
     else:
         electricity_score = 40
 
+    # ----------------------------------------------------
     # Water Score
+    # ----------------------------------------------------
+    # Lower daily water usage is rewarded
+    # with a higher sustainability score.
 
     if data["water"] <= 100:
         water_score = 100
@@ -51,7 +78,11 @@ def calculate_scores(data):
     else:
         water_score = 40
 
+    # ----------------------------------------------------
     # Recycling Score
+    # ----------------------------------------------------
+    # Convert the user's recycling habit into
+    # a predefined sustainability score.
 
     recycling_scores = {
 
@@ -67,7 +98,11 @@ def calculate_scores(data):
         20
     )
 
-    # Plastic Score
+    # ----------------------------------------------------
+    # Plastic Usage Score
+    # ----------------------------------------------------
+    # Fewer single-use plastic items result
+    # in a higher sustainability score.
 
     if data["plastic"] <= 2:
         plastic_score = 100
@@ -89,18 +124,22 @@ def calculate_scores(data):
     )
 
 
-
-# Eco Score
-
 def calculate_eco_score(scores):
     """
     Calculate the overall Eco Score.
 
+    The Eco Score is calculated using a weighted average
+    of all five sustainability categories. Transportation
+    contributes the largest proportion of the final score.
+
     Args:
-        scores (tuple): Category scores.
+        scores (tuple):
+            The category scores returned by
+            calculate_scores().
 
     Returns:
-        float: Eco Score.
+        float:
+            Final Eco Score between 0 and 100.
     """
 
     transport, electricity, water, recycling, plastic = scores
@@ -118,11 +157,21 @@ def calculate_eco_score(scores):
     return round(eco_score, 2)
 
 
-# Achievement Level
-
 def get_level(score):
     """
-    Determine sustainability level.
+    Determine the user's sustainability achievement level.
+
+    The achievement level is based on the final Eco Score
+    and is used throughout the application to provide
+    meaningful feedback to the user.
+
+    Args:
+        score (float):
+            Final Eco Score.
+
+    Returns:
+        str:
+            Achievement level corresponding to the Eco Score.
     """
 
     if score <= 20:
@@ -141,19 +190,33 @@ def get_level(score):
         return "Sustainability Champion"
 
 
-
-# Feedback Generator
-
 def generate_feedback(scores):
     """
-    Generate personalised recommendations.
+    Generate personalised sustainability recommendations.
+
+    Recommendations are created by evaluating the user's
+    performance in each sustainability category. Every
+    category contributes one suggestion to help users
+    understand their strengths and identify areas for
+    improvement.
+
+    Args:
+        scores (tuple):
+            Category scores returned by calculate_scores().
+
+    Returns:
+        list:
+            A list of personalised sustainability
+            recommendations.
     """
 
     feedback = []
 
     transport, electricity, water, recycling, plastic = scores
 
-    # Transport
+    # ----------------------------------------------------
+    # Transportation Feedback
+    # ----------------------------------------------------
 
     if transport >= 80:
 
@@ -173,7 +236,9 @@ def generate_feedback(scores):
             "Reduce private vehicle usage."
         )
 
-    # Electricity
+    # ----------------------------------------------------
+    # Electricity Feedback
+    # ----------------------------------------------------
 
     if electricity >= 80:
 
@@ -193,7 +258,9 @@ def generate_feedback(scores):
             "Electricity usage is high."
         )
 
-    # Water
+    # ----------------------------------------------------
+    # Water Feedback
+    # ----------------------------------------------------
 
     if water >= 80:
 
@@ -213,7 +280,9 @@ def generate_feedback(scores):
             "Water consumption is high."
         )
 
-    # Recycling
+    # ----------------------------------------------------
+    # Recycling Feedback
+    # ----------------------------------------------------
 
     if recycling >= 80:
 
@@ -233,7 +302,9 @@ def generate_feedback(scores):
             "Improve recycling habits."
         )
 
-    # Plastic
+    # ----------------------------------------------------
+    # Plastic Usage Feedback
+    # ----------------------------------------------------
 
     if plastic >= 80:
 

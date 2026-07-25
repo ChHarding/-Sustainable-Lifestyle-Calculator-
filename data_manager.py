@@ -1,7 +1,13 @@
 """
 data_manager.py
 
-Handles saving and loading sustainability records.
+Manages the application's sustainability records.
+
+This module is responsible for creating, reading and updating
+the CSV file used by the Sustainable Lifestyle Calculator.
+It stores each completed sustainability assessment and
+provides helper functions for retrieving historical data
+throughout the application.
 """
 
 import csv
@@ -13,9 +19,16 @@ CSV_FILE = "eco_scores.csv"
 
 def create_csv():
     """
-    Create the CSV file with headers if it doesn't exist.
+    Create the application's CSV file if it does not already exist.
+
+    The CSV file is automatically created with the required
+    column headings the first time the application is run.
+    This ensures that data can be saved without requiring
+    any manual setup.
     """
 
+    # Create the CSV file only if it
+    # does not already exist.
     if not os.path.exists(CSV_FILE):
 
         with open(CSV_FILE, "w", newline="") as file:
@@ -51,22 +64,40 @@ def create_csv():
 
 def save_record(data, scores, eco_score, level, feedback):
     """
-    Save one sustainability record to the CSV file.
+    Save a completed sustainability assessment.
+
+    Each time the user calculates an Eco Score, the
+    assessment is appended as a new row in the CSV file.
+    This allows the application to maintain a history
+    of previous sustainability records for visualisation
+    and progress tracking.
 
     Args:
-        data (dict): User inputs.
-        scores (tuple): Category scores.
-        eco_score (float): Final Eco Score.
-        level (str): Sustainability level.
-        feedback (list): Recommendation messages.
+        data (dict):
+            User-entered sustainability data.
+
+        scores (tuple):
+            Category scores calculated from the user's inputs.
+
+        eco_score (float):
+            Final weighted Eco Score.
+
+        level (str):
+            Sustainability achievement level.
+
+        feedback (list):
+            Personalised sustainability recommendations.
 
     Note:
-        Recommendations are NOT stored.
-        They are generated dynamically whenever the app loads.
+        Recommendations are not stored in the CSV file.
+        They are generated dynamically whenever a new
+        assessment is calculated.
     """
 
     create_csv()
 
+    # Append the latest assessment
+    # to the existing CSV file.
     with open(CSV_FILE, "a", newline="") as file:
 
         writer = csv.writer(file)
@@ -100,10 +131,17 @@ def save_record(data, scores, eco_score, level, feedback):
 
 def load_history():
     """
-    Load all saved records.
+    Load all saved sustainability records.
+
+    The saved CSV file is read and converted into
+    a list of dictionaries. Each dictionary represents
+    one completed sustainability assessment.
 
     Returns:
-        list: List of dictionaries.
+        list:
+            A list containing all saved sustainability
+            records. Returns an empty list if no records
+            are available.
     """
 
     create_csv()
@@ -112,6 +150,8 @@ def load_history():
 
     try:
 
+        # Read every saved assessment
+        # from the CSV file.
         with open(CSV_FILE, "r") as file:
 
             reader = csv.DictReader(file)
@@ -128,7 +168,12 @@ def load_history():
 
 def record_count():
     """
-    Returns the number of saved records.
+    Count the total number of saved assessments.
+
+    Returns:
+        int:
+            Total number of sustainability records
+            currently stored in the CSV file.
     """
 
     history = load_history()
@@ -138,14 +183,18 @@ def record_count():
 
 def latest_record():
     """
-    Returns the latest saved record.
+    Retrieve the most recent sustainability assessment.
 
     Returns:
-        dict or None
+        dict | None:
+            The latest saved record if one exists,
+            otherwise None.
     """
 
     history = load_history()
 
+    # Return None when no records
+    # have been saved yet.
     if len(history) == 0:
         return None
 

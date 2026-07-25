@@ -1,13 +1,34 @@
+"""
+styles.py
+
+Contains the custom styling used throughout the application.
+
+This file injects CSS into the Streamlit interface to provide
+a more consistent visual appearance across all pages. The
+styles customise the layout, colours, buttons, metric cards,
+tables and other interface elements.
+"""
+
 import streamlit as st
 
 
 def load_styles():
+    """
+    Apply the application's custom CSS styling.
+
+    This function injects a shared stylesheet into the
+    Streamlit application. It is called at the beginning
+    of every page to ensure a consistent look and feel
+    throughout the application.
+    """
 
     st.markdown("""
 <style>
 
 /* -----------------------------
 Main Layout
+Controls the overall page width
+and spacing.
 ----------------------------- */
 
 .block-container{
@@ -17,7 +38,7 @@ Main Layout
 }
 
 /* -----------------------------
-Background
+Application Background
 ----------------------------- */
 
 .stApp{
@@ -26,6 +47,8 @@ Background
 
 /* -----------------------------
 Buttons
+Styles all primary buttons used
+throughout the application.
 ----------------------------- */
 
 .stButton > button{
@@ -55,7 +78,7 @@ Buttons
 
 }
 
-/* Force white text */
+/* Ensure button text remains visible. */
 
 .stButton > button p{
 
@@ -64,7 +87,9 @@ Buttons
 }
 
 /* -----------------------------
-Metrics
+Metric Cards
+Customises the appearance of
+Streamlit metric widgets.
 ----------------------------- */
 
 [data-testid="metric-container"]{
@@ -80,7 +105,7 @@ Metrics
 }
 
 /* -----------------------------
-Alerts
+Alert Messages
 ----------------------------- */
 
 div[data-testid="stAlert"]{
@@ -90,7 +115,7 @@ div[data-testid="stAlert"]{
 }
 
 /* -----------------------------
-Dataframe
+Data Tables
 ----------------------------- */
 
 [data-testid="stDataFrame"]{
@@ -100,7 +125,9 @@ Dataframe
 }
 
 /* -----------------------------
-Hide Streamlit Footer
+Streamlit Branding
+Hide default Streamlit menu
+and footer for a cleaner UI.
 ----------------------------- */
 
 footer{

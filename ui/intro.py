@@ -1,3 +1,16 @@
+"""
+intro.py
+
+Displays the application's landing page.
+
+This is the first page users see when they launch the
+Sustainable Lifestyle Calculator. It provides a brief
+introduction to the application, highlights its main
+features, and guides users to either calculate their
+first Eco Score or view their previous results in the
+dashboard.
+"""
+
 import streamlit as st
 
 from data_manager import record_count
@@ -5,11 +18,21 @@ from ui.styles import load_styles
 
 
 def show_intro():
+    """
+    Display the application's introduction page.
 
+    This page introduces the purpose of the Sustainable
+    Lifestyle Calculator, provides a brief overview of
+    its main features, and allows users to either begin
+    a new sustainability assessment or access the
+    dashboard if previous records are available.
+    """
+
+    # Apply the application's shared styling.
     load_styles()
 
     # --------------------------------------------------
-    # HERO
+    # Hero Section
     # --------------------------------------------------
 
     st.caption("SUSTAINABLE LIFESTYLE CALCULATOR")
@@ -29,8 +52,10 @@ and practical sustainability recommendations.
     st.divider()
 
     # --------------------------------------------------
-    # FEATURE CARDS
+    # Feature Overview
     # --------------------------------------------------
+    # Introduce the three main areas of the application
+    # before the user begins the assessment.
 
     col1, col2, col3 = st.columns(3)
 
@@ -70,8 +95,10 @@ recommendations instantly.
     st.divider()
 
     # --------------------------------------------------
-    # STATS
+    # Quick Statistics
     # --------------------------------------------------
+    # Display a summary of the user's saved records
+    # along with the maximum possible Eco Score.
 
     left, right = st.columns(2)
 
@@ -92,8 +119,10 @@ recommendations instantly.
     st.divider()
 
     # --------------------------------------------------
-    # CALL TO ACTION
+    # Navigation
     # --------------------------------------------------
+    # Guide the user to either begin a new calculation
+    # or open the dashboard if historical data exists.
 
     st.subheader("Ready to calculate your Eco Score?")
 
@@ -126,6 +155,8 @@ recommendations instantly.
             st.session_state.page = "dashboard"
             st.rerun()
 
+    # Inform the user why the dashboard
+    # is currently unavailable.
     if dashboard_disabled:
 
         st.caption(
@@ -135,7 +166,7 @@ recommendations instantly.
     st.divider()
 
     # --------------------------------------------------
-    # FOOTER
+    # Footer
     # --------------------------------------------------
 
     st.caption(
