@@ -1,0 +1,135 @@
+Sustainable Lifestyle Calculator - Scoring Change Log (Student-Friendly)
+Date: 2026-07-08
+
+Purpose of this document
+- Explain what changed from the original scoring approach.
+- Explain why the new approach was introduced.
+- Explain, in plain language, how the new method creates more "normal-ish" score distributions.
+
+------------------------------------------------------------
+1) Original Approach (Version 1)
+------------------------------------------------------------
+How it worked:
+- Transport used a hand-made formula with fixed multipliers.
+- Electricity, water, and plastic often used fixed cutoffs (for example: low/medium/high bands).
+- Recycling used fixed category values.
+- The final eco score was a weighted average of category scores.
+
+What was good:
+- Easy to understand quickly.
+- Easy to implement.
+
+Main limitations:
+- Cutoff jumps: tiny input changes could cause big score jumps at boundaries.
+- Manually chosen constants: multipliers were not calibrated from generated data.
+- Uneven behavior across categories: some looked smooth, others looked very "steppy".
+- Score distributions could become clamped (many values at 0 or 100).
+
+------------------------------------------------------------
+2) New Approach (Current)
+------------------------------------------------------------
+High-level idea:
+- Keep the same category structure and weighted final score.
+- Improve how numeric inputs are converted into scores.
+- Use simulation to estimate realistic input distributions.
+- Use rank-based mapping + normal transform to produce more stable, interpretable score shapes.
+
+Core steps:
+1. Generate many realistic random lifestyles (simulation runs).
+2. For each numeric variable, collect the full set of simulated values.
+3. For a new value, compute its percentile rank (how it compares to others).
+4. Convert that percentile to a normal z-score.
+5. Convert z-score into a 0-100 style score (center around 50, spread controlled by SD).
+6. Clamp to [0, 100] for readability and consistency.
+
+Recycling remains categorical:
+- never / sometimes / often / always are still mapped to fixed category scores.
+
+------------------------------------------------------------
+3) Why this helps create "normal-ish" score distributions
+------------------------------------------------------------
+Plain-language explanation:
+- A percentile tells us where a value sits in the crowd.
+- The inverse-normal step reshapes those percentiles into a bell-curve scale.
+- So instead of flat or heavily clamped histograms, scores tend to gather around the middle with fewer extreme values.
+
+Important note:
+- "Normal-ish" does not mean perfectly normal.
+- Discrete inputs (especially counts like plastic) can still look stepped.
+- But overall behavior is usually smoother and more balanced than hard cutoff bands.
+
+------------------------------------------------------------
+4) Example: Why plastic can still look less smooth than water
+------------------------------------------------------------
+- Water is continuous (many possible values), so histogram bars are smoother.
+- Plastic is a count variable (integer-like), so repeated values are expected.
+- A Poisson-like generator is used for plastic to make counts realistic (many low counts, fewer high counts).
+
+------------------------------------------------------------
+5) Simulation Outputs (for transparency)
+------------------------------------------------------------
+The simulation now exports:
+- simulation_summary.csv: key metrics and averages.
+- simulation_summary_runs.csv: one row per run with all resulting scores.
+- simulation_summary_inputs.csv: one row per run with the random input values used.
+
+Why this matters:
+- You can trace exactly how random inputs produced each score.
+- Easier for debugging, reporting, and explaining to non-technical audiences.
+
+------------------------------------------------------------
+6) Bottom line 
+------------------------------------------------------------
+Original method:
+- Simple but brittle (cutoff jumps, manual factors, uneven distributions).
+
+Current method:
+- Data-informed.
+- Uses simulation and percentile-to-normal mapping for smoother, more realistic score behavior.
+- Better for analysis, visualization, and explaining fairness/consistency of scoring.
+
+------------------------------------------------------------
+7) Update on 2026-07-10
+------------------------------------------------------------
+What changed today:
+- Feedback thresholds are no longer fixed at the same values for all categories.
+- Feedback is now based on baseline scores computed from the assumed daily averages.
+- In simple terms: "excellent / moderate / needs improvement" is now judged relative to realistic household assumptions, not one hardcoded score rule for everyone.
+
+How thresholding now works (plain language):
+- First, the model computes an expected (baseline) score for each category using assumed daily inputs.
+- Then each category uses a band around that baseline:
+	- Excellent: score >= baseline + 15
+	- Moderate: baseline - 15 <= score < baseline + 15
+	- Needs improvement: score < baseline - 15
+
+Why this helps:
+- Makes feedback more aligned with the current assumptions.
+- Avoids treating every category as if the same fixed threshold always makes sense.
+
+------------------------------------------------------------
+8) Assumed Daily Input Averages (Current)
+------------------------------------------------------------
+These are the random-input assumptions for one 4-person urban household in urban India per day.
+
+Transport assumptions (triangular distributions):
+- Car: low=20, high=40, mode=30 -> assumed average = 30.00 vehicle-km/day
+- Motorcycle/scooter: low=25, high=45, mode=35 -> assumed average = 35.00 vehicle-km/day
+- Bus: low=20, high=60, mode=40 -> assumed average = 40.00 passenger-km/day
+- Bicycle: low=10, high=40, mode=22 -> assumed average = 24.00 km/day
+- Walking: low=2, high=10, mode=5 -> assumed average = 5.67 km/day
+
+Home resource assumptions (triangular distributions):
+- Electricity: low=1, high=11, mode=6 -> assumed average = 6.00 kWh/day
+- Water: low=60, high=600, mode=250 -> assumed average = 303.33 liters/day
+
+Other behavior assumptions:
+- Recycling category weights:
+	- Never: 10%
+	- Sometimes: 40%
+	- Often: 35%
+	- Always: 15%
+- Plastic is generated with a zero-inflated Poisson-like count model:
+	- 12% chance of exactly 0
+	- otherwise Poisson-like with lambda=4.5, capped at 25
+	- expected average (approx) = 3.96 items/day
