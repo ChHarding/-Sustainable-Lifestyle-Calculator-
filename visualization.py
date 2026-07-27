@@ -1,25 +1,38 @@
 """
 visualization.py
 
-Contains all graph and analytics functions for the
+Creates the charts and analytics used by the
 Sustainable Lifestyle Calculator.
+
+This module converts historical sustainability records
+into interactive visualisations that help users monitor
+their Eco Score over time. It also provides helper
+functions for calculating trends, moving averages and
+goal tracking statistics displayed in the dashboard.
 """
 
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-# Prepare Data
 
 def prepare_dataframe(history):
     """
-    Convert CSV history into a clean pandas DataFrame.
+    Convert saved sustainability records into a pandas DataFrame.
+
+    The records loaded from the CSV file are converted into
+    a DataFrame so they can be analysed and visualised.
+    Numeric columns are converted to the appropriate data
+    type and the date column is parsed as a datetime object.
 
     Args:
-        history (list): Records loaded from CSV.
+        history (list):
+            Sustainability records loaded from the CSV file.
 
     Returns:
-        DataFrame
+        pandas.DataFrame:
+            A cleaned DataFrame ready for analysis and
+            visualisation.
     """
 
     if len(history) == 0:
@@ -38,24 +51,43 @@ def prepare_dataframe(history):
 
     ]
 
+    # Convert score columns to numeric values
+    # so mathematical operations can be performed.
     for column in numeric_columns:
 
         df[column] = pd.to_numeric(df[column])
 
+    # Convert the saved date into
+    # a pandas datetime object.
     df["Date"] = pd.to_datetime(df["Date"])
 
     return df
 
 
-# Interactive Graph
-
 def create_progress_graph(df, selected_metrics):
     """
-    Create interactive Plotly graph.
+    Create an interactive progress chart.
+
+    The graph displays one or more sustainability
+    metrics across time, allowing users to monitor
+    changes in their Eco Score and related values.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+        selected_metrics (list):
+            List of metrics to display.
+
+    Returns:
+        plotly.graph_objects.Figure:
+            Interactive progress chart.
     """
 
     fig = go.Figure()
 
+    # Add one line for each
+    # selected sustainability metric.
     for metric in selected_metrics:
 
         fig.add_trace(
@@ -79,18 +111,30 @@ def create_progress_graph(df, selected_metrics):
 
         yaxis_title="Score",
 
-        hovermode="x unified"
+        hovermode="x unified",
+
+        template="plotly_white"
 
     )
 
     return fig
 
 
-# Weekly Moving Average
-
 def create_weekly_average_graph(df):
     """
-    Create weekly moving average graph.
+    Create a weekly moving average graph.
+
+    The moving average smooths daily fluctuations
+    and helps users identify short-term trends in
+    their sustainability performance.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+    Returns:
+        plotly.graph_objects.Figure:
+            Weekly moving average chart.
     """
 
     weekly = df.copy()
@@ -99,7 +143,7 @@ def create_weekly_average_graph(df):
 
         weekly["Eco Score"]
 
-        .rolling(window=7)
+        .rolling(window=7, min_periods=1)
 
         .mean()
 
@@ -122,14 +166,27 @@ def create_weekly_average_graph(df):
 
     )
 
+    fig.update_traces(mode="lines+markers")
+
+    fig.update_layout(template="plotly_white")
+
     return fig
 
 
-# Monthly Moving Average
-
 def create_monthly_average_graph(df):
     """
-    Create monthly moving average graph.
+    Create a monthly moving average graph.
+
+    This graph highlights longer-term sustainability
+    trends by averaging Eco Scores over a 30-day period.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+    Returns:
+        plotly.graph_objects.Figure:
+            Monthly moving average chart.
     """
 
     monthly = df.copy()
@@ -138,7 +195,7 @@ def create_monthly_average_graph(df):
 
         monthly["Eco Score"]
 
-        .rolling(window=30)
+        .rolling(window=30, min_periods=1)
 
         .mean()
 
@@ -161,14 +218,30 @@ def create_monthly_average_graph(df):
 
     )
 
+    fig.update_traces(mode="lines+markers")
+
+    fig.update_layout(template="plotly_white")
+
     return fig
 
 
-# Goal Graph
-
 def create_goal_graph(df, goal):
     """
-    Create graph with user goal line.
+    Create an Eco Score goal tracking graph.
+
+    The graph compares the user's Eco Score against
+    a target value selected within the dashboard.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+        goal (int):
+            User-selected target Eco Score.
+
+    Returns:
+        plotly.graph_objects.Figure:
+            Goal tracking chart.
     """
 
     fig = go.Figure()
@@ -189,11 +262,15 @@ def create_goal_graph(df, goal):
 
     )
 
+    # Display the user's selected
+    # target Eco Score as a reference line.
     fig.add_hline(
 
         y=goal,
 
         line_dash="dash",
+
+        line_color="royalblue",
 
         annotation_text="Goal"
 
@@ -208,12 +285,24 @@ def create_goal_graph(df, goal):
     return fig
 
 
-# Weekly Goal Analysis
-
-
 def calculate_goal_summary(df, goal):
     """
-    Calculate weekly above/below goal counts.
+    Calculate weekly goal achievement statistics.
+
+    For each calendar week, determine how many
+    recorded Eco Scores were above or below the
+    selected target.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+        goal (int):
+            User-selected target Eco Score.
+
+    Returns:
+        pandas.DataFrame:
+            Weekly summary of goal achievements.
     """
 
     temp = df.copy()
@@ -251,14 +340,26 @@ def calculate_goal_summary(df, goal):
     return summary
 
 
-# Trend Analysis
-
 def calculate_trend(df):
     """
-    Determine whether Eco Score is improving,
-    declining or stable.
+    Analyse the user's recent sustainability trend.
+
+    The average Eco Score from the most recent seven
+    records is compared with the previous seven records
+    to determine whether the user's sustainability
+    performance is improving, declining or remaining stable.
+
+    Args:
+        df (DataFrame):
+            Prepared sustainability data.
+
+    Returns:
+        str:
+            A short description of the current trend.
     """
 
+    # At least two weeks of history are required
+    # for a meaningful comparison.
     if len(df) < 14:
 
         return "Not enough data."
